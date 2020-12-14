@@ -3,7 +3,7 @@ pipeline{
   stages {
     stage('Build Flask app'){
       steps{
-        sh 'docker build -i project .'
+        sh 'docker build -t project .'
       }
     }
     stage('Run docker images'){
