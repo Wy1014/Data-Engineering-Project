@@ -44,13 +44,13 @@ pipeline{
           }
         }  
       }
-    stage('Creating release branch'){
-      steps{
-        if(env.BRANCH_NAME == 'develop'){
-          echo 'branch into release'
-        }  
+      stage('Creating release branch'){
+        steps{
+          if(env.BRANCH_NAME == 'develop'){
+            echo 'branch into release'
+          }
+        }
       }
-    }
+    }  
   }
-}
 }
