@@ -5,3 +5,7 @@ pandas
 gensim
 nltk
 numpy
+requests
+time
+os
+unittest
