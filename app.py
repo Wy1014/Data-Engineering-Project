@@ -3,7 +3,7 @@ from redis import Redis, RedisError, StrictRedis
 import joblib
 import pandas as pd
 
-model = joblib.load('Doc2Vec.model')
+model = joblib.load('tweet.model')
 data = pd.read_csv('./tweet_fin.csv')
 
 
