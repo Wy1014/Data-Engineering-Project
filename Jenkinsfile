@@ -3,29 +3,68 @@ pipeline{
   stages {
     stage('Build Flask app'){
       steps{
-        sh 'docker build -t project .'
+        script{
+          if(env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'feature'){
+            sh 'docker build -t project .'
+          }
+        }      
       }
     }
     stage('Run docker images'){
       parallel{
-        stage('Run Redis'){
-          steps{
-            sh 'docker run -d -p 6379:6379 --name redis redis:alpine'
-          }
-        }
         stage('Run Flask App'){
           steps{
-            sh 'docker run -d -p 5000:5000 --name project_c project'
+            script{
+              if(env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'feature'){
+                sh 'docker run -d -p 5000:5000 --name project_c project'
+              }  
+            }
+          }
+        }
+      }
+    }
+    stage('Testing'){
+      steps{
+        script{
+          if(env.BRANCH_NAME == 'main'){
+            sh 'python stress_test.py'
+          }
+          else if(env.BRANCH_NAME == 'develop'){
+            echo 'develop-specific test'
+          }
+          else if(env.BRANCH_NAME == 'feature'){
+            echo 'feature-specific test'
           }
         }
       }
     }
     stage('Docker images down'){
       steps{
-        sh 'docker rm -f redis'
-        sh 'docker rm -f project_c'
-        sh 'docker rmi -f project'
+        script{
+          if(env.BRANCH_NAME == 'main'){
+            sh 'docker rm -f project_c'
+            sh 'docker rmi -f project'
+          }
+        }
       }
     }
-  }
+    stage('Creating develop branch'){
+      steps{
+        script{
+          if(env.BRANCH_NAME == 'main'){
+            echo 'branch into develop'
+          }
+        }
+      }
+    }
+    stage('Creating feature branch'){
+      steps{
+        script{
+          if(env.BRANCH_NAME == 'main'){
+            echo 'branch into feature'
+          }
+        }
+      }
+    }
+  }  
 }
