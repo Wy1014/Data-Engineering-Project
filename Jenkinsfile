@@ -3,44 +3,34 @@ pipeline{
   stages {
     stage('Build Flask app'){
       steps{
-        script{
-          if(env.BRANCH_NAME == 'feature'){
-            sh 'docker build -t project .'
-          }
-        }      
+        sh 'docker build -t project .'
       }
     }
     stage('Run docker images'){
       parallel{
+        stage('Run Redis'){
+          steps{
+            sh 'docker run -d -p 6379:6379 --name redis redis:alpine'
+          }
+        }
         stage('Run Flask App'){
           steps{
-            script{
-              if(env.BRANCH_NAME == 'feature'){
-                sh 'docker run -d -p 5000:5000 --name project_c project'
-              }  
-            }
+            sh 'docker run -d -p 5000:5000 --name project_c project'
           }
         }
       }
     }
     stage('Testing'){
       steps{
-        script{
-          if(env.BRANCH_NAME == 'feature'){
-            sh 'python unit_test.py'
-          }
-        }
+        sh 'python unit_test.py'
       }
     }
     stage('Docker images down'){
       steps{
-        script{
-          if(env.BRANCH_NAME == 'feature'){
-            sh 'docker rm -f project_c'
-            sh 'docker rmi -f project'
-          }
-        }
+        sh 'docker rm -f redis'
+        sh 'docker rm -f project_c'
+        sh 'docker rmi -f project'
       }
     }
-  }  
+  }
 }
