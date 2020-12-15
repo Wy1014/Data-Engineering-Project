@@ -27,7 +27,7 @@ pipeline{
       steps{
         script{
           if(env.BRANCH_NAME == 'main'){
-            sh 'python stress_test.py'
+            sh 'python unit_test.py'
           }
           else if(env.BRANCH_NAME == 'develop'){
             echo 'develop-specific test'
