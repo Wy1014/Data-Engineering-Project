@@ -20,6 +20,11 @@ pipeline{
         }
       }
     }
+    stage('Testing'){
+      steps{
+        sh 'python unit_test.py'
+      }
+    }
     stage('Docker images down'){
       steps{
         sh 'docker rm -f redis'
