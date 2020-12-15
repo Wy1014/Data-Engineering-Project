@@ -3,68 +3,34 @@ pipeline{
   stages {
     stage('Build Flask app'){
       steps{
-        script{
-          if(env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'feature'){
-            sh 'docker build -t project .'
-          }
-        }      
+        sh 'docker build -t myflaskapp .'
       }
     }
     stage('Run docker images'){
       parallel{
+        stage('Run Redis'){
+          steps{
+            sh 'docker run -d -p 6379:6379 --name redis redis:alpine'
+          }
+        }
         stage('Run Flask App'){
           steps{
-            script{
-              if(env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'feature'){
-                sh 'docker run -d -p 5000:5000 --name project_c project'
-              }  
-            }
+            sh 'docker run -d -p 5000:5000 --name myflaskapp_c myflaskapp'
           }
         }
       }
     }
     stage('Testing'){
       steps{
-        script{
-          if(env.BRANCH_NAME == 'main'){
-            sh 'python unit_test.py'
-          }
-          else if(env.BRANCH_NAME == 'develop'){
-            echo 'develop-specific test'
-          }
-          else if(env.BRANCH_NAME == 'feature'){
-            echo 'feature-specific test'
-          }
-        }
+        sh 'python stress_test.py'
       }
     }
     stage('Docker images down'){
       steps{
-        script{
-          if(env.BRANCH_NAME == 'main'){
-            sh 'docker rm -f project_c'
-            sh 'docker rmi -f project'
-          }
-        }
+        sh 'docker rm -f redis'
+        sh 'docker rm -f myflaskapp_c'
+        sh 'docker rmi -f myflaskapp'
       }
     }
-    stage('Creating develop branch'){
-      steps{
-        script{
-          if(env.BRANCH_NAME == 'main'){
-            echo 'branch into develop'
-          }
-        }
-      }
-    }
-    stage('Creating feature branch'){
-      steps{
-        script{
-          if(env.BRANCH_NAME == 'main'){
-            echo 'branch into feature'
-          }
-        }
-      }
-    }
-  }  
+  }
 }
