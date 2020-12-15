@@ -8,11 +8,6 @@ pipeline{
     }
     stage('Run docker images'){
       parallel{
-        stage('Run Redis'){
-          steps{
-            sh 'docker run -d -p 6379:6379 --name redis redis:alpine'
-          }
-        }
         stage('Run Flask App'){
           steps{
             sh 'docker run -d -p 5000:5000 --name project_c project'
