@@ -8,7 +8,7 @@ ENV FLASK_APP = app.py
 COPY requirements.txt .
 
 
-RUN pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install -r requirements.txt
 
 COPY . .
 
