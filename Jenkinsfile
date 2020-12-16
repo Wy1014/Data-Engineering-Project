@@ -10,7 +10,7 @@ pipeline{
       parallel{
         stage('Run Flask App'){
           steps{
-            sh 'docker run -d -p 5000:5000 --name project_c project'
+            sh 'docker-compose up'
           }
         }
       }
