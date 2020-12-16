@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-import sys
-sys.path.append("\\home\\lu\\桌面\\project")
 import unittest 
 import requests 
 import time 
