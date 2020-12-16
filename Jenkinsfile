@@ -16,7 +16,7 @@ pipeline{
           steps{
             script{
               if(env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release'){
-                sh 'docker run -d -p 5000:5000 --name project_c project'
+                sh 'docker-compose up'
               }  
             }
           }
