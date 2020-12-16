@@ -45,7 +45,7 @@ pipeline{
         }
       }
     }
-    stage('Creating release branch'){
+    stage('Go living'){
       steps{
         script{
           if(env.BRANCH_NAME == 'develop'){
