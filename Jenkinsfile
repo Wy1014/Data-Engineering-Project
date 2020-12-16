@@ -3,27 +3,55 @@ pipeline{
   stages {
     stage('Build Flask app'){
       steps{
-        sh 'docker build -t project .'   
+        script{
+          if(env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release'){
+            sh 'docker build -t project .'
+          }
+        }      
       }
     }
     stage('Run docker images'){
       parallel{
         stage('Run Flask App'){
           steps{
-            sh 'docker run -d -p 5000:5000 --name project_c project'
+            script{
+              if(env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release'){
+                sh 'docker run -d -p 5000:5000 --name project_c project'
+              }  
+            }
           }
         }
       }
     }
     stage('Testing'){
       steps{
-        sh 'python stress_test.py'
+        script{
+          if(env.BRANCH_NAME == 'develop'){
+            sh 'python stress_test.py'
+          }
+          else if(env.BRANCH_NAME == 'release'){
+            echo 'release-specific test'
+          }
+        }
       }
     }
     stage('Docker images down'){
       steps{
-        sh 'docker rm -f project_c'
-        sh 'docker rmi -f project' 
+        script{
+          if(env.BRANCH_NAME == 'develop'){
+            sh 'docker rm -f project_c'
+            sh 'docker rmi -f project'
+          }
+        }
+      }
+    }
+    stage('Creating release branch'){
+      steps{
+        script{
+          if(env.BRANCH_NAME == 'develop'){
+            echo 'branch into release'
+          }
+        }
       }
     }
   }  
